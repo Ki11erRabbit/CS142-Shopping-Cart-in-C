@@ -11,6 +11,9 @@ struct ItemToPurchase* ItemToPurchase_constructorDefault() {
     newItem = malloc(sizeof(ItemToPurchase));
     newItem->private = malloc(sizeof(ItemToPurchasePrivate));
 
+    newItem->private->name = NULL;
+    newItem->private->description = NULL;
+
     newItem->setDesc = ItemToPurchase_setDesc;
     newItem->getDesc = ItemToPurchase_getDesc;
     newItem->printCost = ItemToPurchase_printCost;
