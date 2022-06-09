@@ -44,32 +44,116 @@ ShoppingCart* ShoppingCart_constructor(char* name, char* date) {
 
     return newCart;
 }
-void ShoppingCart_deconstructor(ShoppingCart* self) {
-    free(self->private->customerName);
-    free(self->private->date);
+void ShoppingCart_deconstructor(ShoppingCart* this) {
+    free(this->private->customerName);
+    free(this->private->date);
 
-    for (size_t i = 0; i < self->private->itemArraySize; i++) {
-        ItemToPurchase_deconstructor(&self->private->itemArray[i]);
+    for (size_t i = 0; i < this->private->itemArraySize; i++) {
+        ItemToPurchase_deconstructor(&this->private->itemArray[i]);
     }
-    free(self->private->itemArray);
-    free(self->private);
-    free(self);
-    self = NULL;
+    free(this->private->itemArray);
+    free(this->private);
+    free(this);
+    this = NULL;
 }
 
-char* ShoppingCart_getName(ShoppingCart* self) {
-    return strdup(self->private->customerName);
+char* ShoppingCart_getName(ShoppingCart* this) {
+    return strdup(this->private->customerName);
 }
-char* ShoppingCart_getDate(ShoppingCart* self) {
-    return strdup(self->private->date);
+char* ShoppingCart_getDate(ShoppingCart* this) {
+    return strdup(this->private->date);
 }
 
-void ShoppingCart_addItem(ShoppingCart* self, ItemToPurchase* item);
-void ShoppingCart_removeItem(ShoppingCart* self, char* itemName);
-void ShoppingCart_updateQuantity(ShoppingCart* self, char* itemName);
+size_t ShoppingCart_find(ShoppingCart* this, char* itemName) {
+    for (size_t i = 0; i < this->private->itemArraySize; i++) {
+        if (strcmp(itemName,this->private->itemArray[i].getName(&this->private->itemArray[i])) == 0) {
+            return i;
+        }
+    }
+    return 0;
+}
 
-int ShoppingCart_getQuantity(ShoppingCart* self);
-double ShoppingCart_getTotalCost(ShoppingCart* self);
+void ShoppingCart_addItem(ShoppingCart* this, ItemToPurchase* item) {
+    size_t pos = ShoppingCart_find(this, item->getName(item));
+    if (pos) {
+        printf("Item is already found in the cart. It will not be added.\n");
+        ItemToPurchase_deconstructor(item);
+    }
+    else {
+        this->private->itemArraySize++;
+        if (this->private->itemArraySize > this->private->itemArrayMaxSize) {
+            ItemToPurchase* newItemArray = NULL;
+            size_t newArrayMaxSize = (this->private->itemArrayMaxSize + (this->private->itemArrayMaxSize / 4));
+            newItemArray = malloc(sizeof(newItemArray) * newArrayMaxSize);
 
-void ShoppingCart_printDesc(ShoppingCart* self);
-void ShoppingCart_printCost(ShoppingCart* self);
+            for (size_t i = 0; i < this->private->itemArrayMaxSize; i++) {
+                newItemArray[i] = *this->private->itemArray[0].copy(&this->private->itemArray[0]);
+            }
+            newItemArray[this->private->itemArraySize] = *item;
+
+            for (size_t i = 0; i < this->private->itemArrayMaxSize; i++) {
+                ItemToPurchase_deconstructor(&this->private->itemArray[0]);
+            }
+            free(this->private->itemArray);
+            this->private->itemArray = NULL;
+            this->private->itemArray = newItemArray;
+            this->private->itemArrayMaxSize = newArrayMaxSize;
+
+        }
+        else {
+            this->private->itemArray[this->private->itemArraySize] = *item;
+        }
+
+    }
+}
+void ShoppingCart_removeItem(ShoppingCart* this, char* itemName) {
+    size_t pos = ShoppingCart_find(this, itemName);
+    if (!pos) {
+        printf("Item not found in the cart. It will not be removed.\n");
+    }
+    else {
+        ItemToPurchase_deconstructor(&this->private->itemArray[pos]);
+
+        for (size_t i = 0; i < this->private->itemArraySize; i++) {
+            if (i != pos) {
+
+            }
+        }
+    }
+}
+void ShoppingCart_updateQuantity(ShoppingCart* this, char* itemName);
+
+int ShoppingCart_getQuantity(ShoppingCart* this) {
+    int total = 0;
+    for (size_t i = 0; i < this->private->itemArraySize; i ++) {
+        total += this->private->itemArray[i].getQuantity(&this->private->itemArray[i]);
+    }
+
+    return total;
+}
+double ShoppingCart_getTotalCost(ShoppingCart* this) {
+    double total = 0;
+    for (size_t i = 0; i < this->private->itemArraySize; i ++) {
+        total += this->private->itemArray[i].getQuantity(&this->private->itemArray[i])
+                * this->private->itemArray[i].getPrice(&this->private->itemArray[i]);
+    }
+    return total;
+}
+
+void ShoppingCart_printDesc(ShoppingCart* this) {
+    printf("%s\'s Shopping Cart - %s\n\n",this->private->customerName, this->private->date);
+
+    for (size_t i = 0; i < this->private->itemArraySize; i++) {
+        this->private->itemArray[i].printDesc(&this->private->itemArray[i]);
+    }
+}
+void ShoppingCart_printCost(ShoppingCart* this) {
+    printf("%s\'s Shopping Cart - %s\n",this->private->customerName, this->private->date);
+    printf("Number of Items: %d\n\n", this->getQuantity(this));
+
+    for (size_t i = 0; i < this->private->itemArraySize; i++) {
+        this->private->itemArray[i].printDesc(&this->private->itemArray[i]);
+    }
+    printf("\nTotal: $%.2f",this->getCost(this));
+
+}

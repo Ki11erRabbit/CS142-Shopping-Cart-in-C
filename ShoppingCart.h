@@ -38,6 +38,7 @@ typedef struct ShoppingCart {
 
 } ShoppingCart;
 
+//Public functions:
 ShoppingCart* ShoppingCart_constructorDefault();
 ShoppingCart* ShoppingCart_constructor(char* name, char* date);
 void ShoppingCart_deconstructor(ShoppingCart* self);
@@ -54,6 +55,9 @@ double ShoppingCart_getTotalCost(ShoppingCart* self);
 
 void ShoppingCart_printDesc(ShoppingCart* self);
 void ShoppingCart_printCost(ShoppingCart* self);
+
+//Private Functions:
+size_t ShoppingCart_find(ShoppingCart* self, char* itemName);
 
 
 #endif //CS142_SHOPPING_CART_IN_C_SHOPPINGCART_H
