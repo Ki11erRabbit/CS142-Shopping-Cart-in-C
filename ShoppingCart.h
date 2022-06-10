@@ -28,7 +28,7 @@ typedef struct ShoppingCart {
 
     void (*addItem)(struct ShoppingCart*, ItemToPurchase*);
     void (*removeItem)(struct ShoppingCart*, char*);
-    void (*updateQuantity)(struct ShoppingCart*, char*);
+    void (*updateQuantity)(struct ShoppingCart*, char*, int);
 
     int (*getQuantity)(struct ShoppingCart*);
     double (*getCost)(struct ShoppingCart*);
@@ -48,7 +48,7 @@ char* ShoppingCart_getDate(ShoppingCart* self);
 
 void ShoppingCart_addItem(ShoppingCart* self, ItemToPurchase* item);
 void ShoppingCart_removeItem(ShoppingCart* self, char* itemName);
-void ShoppingCart_updateQuantity(ShoppingCart* self, char* itemName);
+void ShoppingCart_updateQuantity(ShoppingCart* self, char* itemName, int quantity);
 
 int ShoppingCart_getQuantity(ShoppingCart* self);
 double ShoppingCart_getTotalCost(ShoppingCart* self);

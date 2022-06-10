@@ -24,6 +24,7 @@ typedef struct ItemToPurchase {
     char* (*getDesc)(struct ItemToPurchase*);
 
     int (*getQuantity)(struct ItemToPurchase*);
+    void (*updateQuantity)(struct ItemToPurchase*, int);
     double (*getPrice)(struct ItemToPurchase*);
     char* (*getName)(struct ItemToPurchase*);
 
@@ -38,6 +39,7 @@ ItemToPurchase* ItemToPurchase_copyConstructor(ItemToPurchase* self);
 void ItemToPurchase_deconstructor(ItemToPurchase* self);
 
 int ItemToPurchase_getQuantity(ItemToPurchase* self);
+void ItemToPurchase_setQuantity(ItemToPurchase* self, int quantity);
 double ItemToPurchase_getPrice(ItemToPurchase* self);
 char* ItemToPurchase_getName(ItemToPurchase* self);
 

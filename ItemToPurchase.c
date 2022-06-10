@@ -20,6 +20,7 @@ struct ItemToPurchase* ItemToPurchase_constructorDefault() {
     newItem->getDesc = ItemToPurchase_getDesc;
 
     newItem->getQuantity = ItemToPurchase_getQuantity;
+    newItem->updateQuantity = ItemToPurchase_setQuantity;
     newItem->getPrice = ItemToPurchase_getPrice;
     newItem->getName = ItemToPurchase_getName;
 
@@ -55,6 +56,9 @@ void ItemToPurchase_deconstructor(ItemToPurchase* this) {
 
 int ItemToPurchase_getQuantity(ItemToPurchase* this) {
     return this->private->quantity;
+}
+void ItemToPurchase_setQuantity(ItemToPurchase* this, int quantity) {
+    this->private->quantity = quantity;
 }
 double ItemToPurchase_getPrice(ItemToPurchase* this) {
     return this->private->price;

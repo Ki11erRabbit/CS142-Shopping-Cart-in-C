@@ -115,13 +115,28 @@ void ShoppingCart_removeItem(ShoppingCart* this, char* itemName) {
         ItemToPurchase_deconstructor(&this->private->itemArray[pos]);
 
         for (size_t i = 0; i < this->private->itemArraySize; i++) {
-            if (i != pos) {
-
+            if (i == pos) {
+                ItemToPurchase_deconstructor(&this->private->itemArray[pos]);
+                for (i = pos + 1; i < this->private->itemArraySize; i ++) {
+                    this->private->itemArray[i - 1] = this->private->itemArray[i];
+                }
+                goto arrayShifted;
             }
         }
+        arrayShifted:
+        this->private->itemArraySize--;
+
     }
 }
-void ShoppingCart_updateQuantity(ShoppingCart* this, char* itemName);
+void ShoppingCart_updateQuantity(ShoppingCart* this, char* itemName, int quantity) {
+    size_t pos = ShoppingCart_find(this, itemName);
+    if (!pos) {
+        printf("Item not found in the cart. It will not be modified.\n");
+    }
+    else {
+        this->private->itemArray[pos].updateQuantity(&this->private->itemArray[pos],quantity);
+    }
+}
 
 int ShoppingCart_getQuantity(ShoppingCart* this) {
     int total = 0;
