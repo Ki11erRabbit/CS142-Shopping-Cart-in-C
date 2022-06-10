@@ -11,9 +11,9 @@ ShoppingCart* ShoppingCart_constructorDefault() {
     newCart->private = malloc((sizeof(ShoppingCartPrivate)));
     newCart->private->customerName = strdup("none");
     newCart->private->date = strdup("January 1, 1970");
-    newCart->private->itemArray = NULL;
+    newCart->private->itemArray = malloc(sizeof(ItemToPurchase));
     newCart->private->itemArraySize = 0;
-    newCart->private->itemArrayMaxSize = 0;
+    newCart->private->itemArrayMaxSize = 1;
 
     newCart->newBlank = ShoppingCart_constructorDefault;
     newCart->new = ShoppingCart_constructor;

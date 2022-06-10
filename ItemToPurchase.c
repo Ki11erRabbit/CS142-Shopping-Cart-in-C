@@ -64,7 +64,7 @@ double ItemToPurchase_getPrice(ItemToPurchase* this) {
     return this->private->price;
 }
 char* ItemToPurchase_getName(ItemToPurchase* this) {
-    return strdup(this->getName(this));
+    return strdup(this->private->name);
 }
 
 void ItemToPurchase_setDesc(struct ItemToPurchase* this, const char* desc) {
