@@ -23,14 +23,16 @@ int main() {
 
     printf("Enter Customer's Name: ");
     getline(&name,&buffSize,stdin);
+    name = strtok(name,"\n");
     printf("Enter Today's Date: ");
     getline(&date,&buffSize,stdin);
+    date = strtok(date,"\n");
 
     cart = ShoppingCart_constructor(name,date);
-    free(name);
+    /*free(name);
     free(date);
     name = NULL;
-    date = NULL;
+    date = NULL;*/
     printHelp();
     while (cont) {
         printf("Enter option: ");
@@ -44,26 +46,31 @@ int main() {
 
             printf("Enter the item name: ");
             getline(&itemName,&buffSize, stdin);
+            itemName = strtok(itemName,"\n");
 
             printf("Enter the item description: ");
             getline(&itemDesc,&buffSize,stdin);
+            itemDesc = strtok(itemDesc,"\n");
 
             printf("Enter the item price: ");
             getline(&itemPrice,&buffSize,stdin);
+            itemPrice = strtok(itemPrice,"\n");
 
             printf("Enter the item quantity: ");
             getline(&itemQuantity,&buffSize,stdin);
+            itemQuantity = strtok(itemQuantity,"\n");
 
             char* endpoint = NULL;
-            ItemToPurchase* newItem = ItemToPurchase_constructor(strtok(itemName,"\n"), strtok(itemDesc,"\n"),
-                          strtod(strtok(itemPrice,"\n"),&endpoint),atoi(strtok(itemQuantity,"\n")));
+            ItemToPurchase* newItem = NULL;
+            newItem = ItemToPurchase_constructor(strdup(itemName), strdup(itemDesc),
+                          strtod(itemPrice,&endpoint),atoi(itemQuantity));
 
             cart->addItem(cart, newItem);
 
             free(itemName);
-            free(itemDesc);
+            //free(itemDesc);
             free(itemPrice);
-            free(endpoint);
+            //free(endpoint);
             free(itemQuantity);
         }
         else if (strcmp(buff,"remove\n") == 0) {
@@ -101,6 +108,7 @@ int main() {
         }
 
     }
+    cart->destroy(cart);
     free(buff);
 
 

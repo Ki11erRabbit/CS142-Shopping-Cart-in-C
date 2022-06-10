@@ -38,8 +38,8 @@ ShoppingCart* ShoppingCart_constructor(char* name, char* date) {
     ShoppingCart* newCart = NULL;
     newCart = ShoppingCart_constructorDefault();
 
-    newCart->private->customerName = strdup(name);
-    newCart->private->date = strdup(date);
+    newCart->private->customerName = name;
+    newCart->private->date = date;
 
 
     return newCart;
@@ -83,7 +83,13 @@ void ShoppingCart_addItem(ShoppingCart* this, ItemToPurchase* item) {
         this->private->itemArraySize++;
         if (this->private->itemArraySize > this->private->itemArrayMaxSize) {
             ItemToPurchase* newItemArray = NULL;
-            size_t newArrayMaxSize = (this->private->itemArrayMaxSize + (this->private->itemArrayMaxSize / 4));
+            size_t newArrayMaxSize = this->private->itemArrayMaxSize / 2;
+            if (newArrayMaxSize == 0) {
+                newArrayMaxSize += this->private->itemArrayMaxSize * 2;
+            }
+            else {
+                newArrayMaxSize += this->private->itemArrayMaxSize;
+            }
             newItemArray = malloc(sizeof(newItemArray) * newArrayMaxSize);
 
             for (size_t i = 0; i < this->private->itemArrayMaxSize; i++) {
@@ -94,14 +100,14 @@ void ShoppingCart_addItem(ShoppingCart* this, ItemToPurchase* item) {
             for (size_t i = 0; i < this->private->itemArrayMaxSize; i++) {
                 ItemToPurchase_deconstructor(&this->private->itemArray[0]);
             }
-            free(this->private->itemArray);
+            //free(this->private->itemArray);
             this->private->itemArray = NULL;
             this->private->itemArray = newItemArray;
             this->private->itemArrayMaxSize = newArrayMaxSize;
 
         }
         else {
-            this->private->itemArray[this->private->itemArraySize] = *item;
+            this->private->itemArray[this->private->itemArraySize - 1] = *item;
         }
 
     }
@@ -161,6 +167,7 @@ void ShoppingCart_printDesc(ShoppingCart* this) {
     for (size_t i = 0; i < this->private->itemArraySize; i++) {
         this->private->itemArray[i].printDesc(&this->private->itemArray[i]);
     }
+    printf("\n");
 }
 void ShoppingCart_printCost(ShoppingCart* this) {
     printf("%s\'s Shopping Cart - %s\n",this->private->customerName, this->private->date);
@@ -169,6 +176,6 @@ void ShoppingCart_printCost(ShoppingCart* this) {
     for (size_t i = 0; i < this->private->itemArraySize; i++) {
         this->private->itemArray[i].printDesc(&this->private->itemArray[i]);
     }
-    printf("\nTotal: $%.2f",this->getCost(this));
+    printf("\nTotal: $%.2f\n",this->getCost(this));
 
 }
