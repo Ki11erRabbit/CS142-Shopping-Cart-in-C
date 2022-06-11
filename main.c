@@ -62,14 +62,14 @@ int main() {
 
             char* endpoint = NULL;
             ItemToPurchase* newItem = NULL;
-            newItem = ItemToPurchase_constructor(strdup(itemName), strdup(itemDesc),
-                          strtod(itemPrice,&endpoint),atoi(itemQuantity));
+            newItem = ItemToPurchase_constructor(strdup(itemName), strdup(itemDesc),strtod(itemPrice,&endpoint),atoi(itemQuantity));
 
             cart->addItem(cart, newItem);
 
             free(itemName);
             free(itemDesc);
             free(itemPrice);
+            endpoint = NULL;
             //free(endpoint);
             free(itemQuantity);
         }
