@@ -57,7 +57,7 @@ void ShoppingCart_printDesc(ShoppingCart* self);
 void ShoppingCart_printCost(ShoppingCart* self);
 
 //Private Functions:
-size_t ShoppingCart_find(ShoppingCart* self, char* itemName);
+size_t* ShoppingCart_find(ShoppingCart* self, char* itemName);
 
 
 #endif //CS142_SHOPPING_CART_IN_C_SHOPPINGCART_H

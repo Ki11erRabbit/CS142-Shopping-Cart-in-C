@@ -74,9 +74,9 @@ char* ItemToPurchase_getDesc(struct ItemToPurchase* this) {
     return strdup(this->private->description);
 }
 void ItemToPurchase_printCost(struct ItemToPurchase* this) {
-    printf("%s %d @ $%.2f = %.2f",this->private->name, this->private->quantity, this->private->price,
+    printf("%s %d @ $%.2f = %.2f\n",this->private->name, this->private->quantity, this->private->price,
            this->private->quantity * this->private->price);
 }
 void ItemToPurchase_printDesc(struct ItemToPurchase* this) {
-    printf("%s: %s",this->private->name, this->private->description);
+    printf("%s: %s\n",this->private->name, this->private->description);
 }

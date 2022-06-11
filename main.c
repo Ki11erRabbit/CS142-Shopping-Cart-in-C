@@ -68,7 +68,7 @@ int main() {
             cart->addItem(cart, newItem);
 
             free(itemName);
-            //free(itemDesc);
+            free(itemDesc);
             free(itemPrice);
             //free(endpoint);
             free(itemQuantity);

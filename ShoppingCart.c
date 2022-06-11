@@ -64,18 +64,25 @@ char* ShoppingCart_getDate(ShoppingCart* this) {
     return strdup(this->private->date);
 }
 
-size_t ShoppingCart_find(ShoppingCart* this, char* itemName) {
+size_t* ShoppingCart_find(ShoppingCart* this, char* itemName) {
+
+    size_t* foundAndPos = malloc(sizeof(size_t) * 2);
+    foundAndPos[0] = 0;
+    foundAndPos[1] = 0;
+
     for (size_t i = 0; i < this->private->itemArraySize; i++) {
         if (strcmp(itemName,this->private->itemArray[i].getName(&this->private->itemArray[i])) == 0) {
-            return i;
+            foundAndPos[0] = 1;
+            foundAndPos[1] = i;
+            return foundAndPos;
         }
     }
-    return 0;
+    return foundAndPos;
 }
 
 void ShoppingCart_addItem(ShoppingCart* this, ItemToPurchase* item) {
-    size_t pos = ShoppingCart_find(this, item->getName(item));
-    if (pos) {
+    size_t* pos = ShoppingCart_find(this, item->getName(item));
+    if (pos[0]) {
         printf("Item is already found in the cart. It will not be added.\n");
         ItemToPurchase_deconstructor(item);
     }
@@ -90,17 +97,17 @@ void ShoppingCart_addItem(ShoppingCart* this, ItemToPurchase* item) {
             else {
                 newArrayMaxSize += this->private->itemArrayMaxSize;
             }
-            newItemArray = malloc(sizeof(newItemArray) * newArrayMaxSize);
+            newItemArray = calloc(newArrayMaxSize,sizeof(newItemArray));
 
             for (size_t i = 0; i < this->private->itemArrayMaxSize; i++) {
-                newItemArray[i] = *this->private->itemArray[0].copy(&this->private->itemArray[0]);
+                newItemArray[i] = this->private->itemArray[i];
             }
-            newItemArray[this->private->itemArraySize] = *item;
+            newItemArray[this->private->itemArraySize - 1] = *item;
 
-            for (size_t i = 0; i < this->private->itemArrayMaxSize; i++) {
-                ItemToPurchase_deconstructor(&this->private->itemArray[0]);
-            }
-            //free(this->private->itemArray);
+            /*for (size_t i = 0; i < this->private->itemArrayMaxSize; i++) {
+                ItemToPurchase_deconstructor(&this->private->itemArray[i]);
+            }*/
+            free(this->private->itemArray);
             this->private->itemArray = NULL;
             this->private->itemArray = newItemArray;
             this->private->itemArrayMaxSize = newArrayMaxSize;
@@ -111,19 +118,20 @@ void ShoppingCart_addItem(ShoppingCart* this, ItemToPurchase* item) {
         }
 
     }
+    free(pos);
 }
 void ShoppingCart_removeItem(ShoppingCart* this, char* itemName) {
-    size_t pos = ShoppingCart_find(this, itemName);
-    if (!pos) {
+    size_t* pos = ShoppingCart_find(this, itemName);
+    if (!pos[0]) {
         printf("Item not found in the cart. It will not be removed.\n");
     }
     else {
-        ItemToPurchase_deconstructor(&this->private->itemArray[pos]);
+        ItemToPurchase_deconstructor(&this->private->itemArray[pos[1]]);
 
         for (size_t i = 0; i < this->private->itemArraySize; i++) {
-            if (i == pos) {
-                ItemToPurchase_deconstructor(&this->private->itemArray[pos]);
-                for (i = pos + 1; i < this->private->itemArraySize; i ++) {
+            if (i == pos[1]) {
+                ItemToPurchase_deconstructor(&this->private->itemArray[pos[1]]);
+                for (i = pos[1] + 1; i < this->private->itemArraySize; i ++) {
                     this->private->itemArray[i - 1] = this->private->itemArray[i];
                 }
                 goto arrayShifted;
@@ -131,17 +139,18 @@ void ShoppingCart_removeItem(ShoppingCart* this, char* itemName) {
         }
         arrayShifted:
         this->private->itemArraySize--;
-
     }
+    free(pos);
 }
 void ShoppingCart_updateQuantity(ShoppingCart* this, char* itemName, int quantity) {
-    size_t pos = ShoppingCart_find(this, itemName);
-    if (!pos) {
+    size_t* pos = ShoppingCart_find(this, itemName);
+    if (!pos[0]) {
         printf("Item not found in the cart. It will not be modified.\n");
     }
     else {
-        this->private->itemArray[pos].updateQuantity(&this->private->itemArray[pos],quantity);
+        this->private->itemArray[pos[1]].updateQuantity(&this->private->itemArray[pos[1]],quantity);
     }
+    free(pos);
 }
 
 int ShoppingCart_getQuantity(ShoppingCart* this) {
